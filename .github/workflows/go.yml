@@ -36,4 +36,4 @@ jobs:
         run: make
 
       - name: Test
-        run: make test
+        run: CGO_ENABLED=1 go test ./extractor/filesystem/containers/dockercomposeimage
