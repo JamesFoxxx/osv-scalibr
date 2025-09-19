@@ -178,9 +178,9 @@ func uniqueImagesFromReader(ctx context.Context, input *filesystem.ScanInput) ([
 
 	// Load environment variables from a sibling .env file if it exists
 	workingDir := filepath.Dir(input.Path)
-	envPath := filepath.Join(workingDir, ".env")
+	envPath := filepath.ToSlash(filepath.Join(workingDir, ".env"))
 	environment := types.Mapping{}
-	if f, err := input.FS.Open(filepath.ToSlash(envPath)); err == nil {
+	if f, err := input.FS.Open(envPath); err == nil {
 		defer f.Close()
 		if envVars, err := dotenv.Parse(f); err != nil {
 			log.Warnf("dotenv.Parse(%q): %v", envPath, err)
