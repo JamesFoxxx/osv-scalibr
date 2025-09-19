@@ -15,6 +15,8 @@ jobs:
       matrix:
         os: [windows-latest]
     runs-on: ${{ matrix.os }}
+    env:
+      CGO_ENABLED: 1
     steps:
       - uses: actions/checkout@v4
 
@@ -43,7 +45,6 @@ jobs:
         with:
           version: "23.x"
           repo-token: ${{ secrets.GITHUB_TOKEN }}
-          cache: true
 
       # Cache protoc-gen-go installation
       - name: protoc-gen-go Cache
@@ -65,4 +66,4 @@ jobs:
           make
 
       - name: Test
-        run: CGO_ENABLED=1 go test ./extractor/filesystem/containers/dockercomposeimage
+        run: go test ./extractor/filesystem/containers/dockercomposeimage
