@@ -25,14 +25,17 @@ jobs:
           cache: true
 
       # Cache Go modules and build cache
-      - name: Go Module Cache
+      - name: Go Module and Build Cache
         uses: actions/cache@v3
         with:
           path: |
             ~/go/pkg/mod
             ~/.cache/go-build
-          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+            ./_build
+            ./scalibr
+          key: ${{ runner.os }}-go-build-${{ hashFiles('**/go.sum', '**/Makefile') }}
           restore-keys: |
+            ${{ runner.os }}-go-build-
             ${{ runner.os }}-go-
 
       - name: Install Protoc
@@ -55,7 +58,11 @@ jobs:
         run: go install google.golang.org/protobuf/cmd/protoc-gen-go
 
       - name: Build
-        run: make
+        run: |
+          # Ensure we use cached dependencies
+          go mod download
+          # Then build using the Makefile
+          make
 
       - name: Test
         run: CGO_ENABLED=1 go test ./extractor/filesystem/containers/dockercomposeimage
