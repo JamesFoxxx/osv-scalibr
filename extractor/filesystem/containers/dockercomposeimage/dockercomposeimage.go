@@ -180,7 +180,7 @@ func uniqueImagesFromReader(ctx context.Context, input *filesystem.ScanInput) ([
 	workingDir := filepath.Dir(input.Path)
 	envPath := filepath.Join(workingDir, ".env")
 	environment := types.Mapping{}
-	if f, err := input.FS.Open(envPath); err == nil {
+	if f, err := input.FS.Open(filepath.ToSlash(envPath)); err == nil {
 		defer f.Close()
 		if envVars, err := dotenv.Parse(f); err != nil {
 			log.Warnf("dotenv.Parse(%q): %v", envPath, err)
@@ -195,6 +195,7 @@ func uniqueImagesFromReader(ctx context.Context, input *filesystem.ScanInput) ([
 	configFiles := []types.ConfigFile{
 		{Filename: absPath},
 	}
+	log.Debug("environment vars: ", environment)
 	details := types.ConfigDetails{
 		WorkingDir:  workingDir,
 		ConfigFiles: configFiles,
